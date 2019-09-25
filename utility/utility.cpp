@@ -85,9 +85,42 @@ void readAll() {
     int modes[MCP23x17_PORTS][8];
 
     for (int port = 0; port < MCP23x17_PORTS; ++port) {
-        iodirValues[port]= wiringPiI2CReadReg8(mcp23x17_handle, MCP23x17_IODIR(port));
-        olatValues[port] = wiringPiI2CReadReg8(mcp23x17_handle, MCP23x17_OLAT(port));
-        gpioValues[port] = wiringPiI2CReadReg8(mcp23x17_handle, MCP23x17_GPIO(port));
+        int regIODIR = iodirValues[port]= wiringPiI2CReadReg8(mcp23x17_handle, MCP23x17_IODIR(port));
+        int regOLAT  = olatValues[port] = wiringPiI2CReadReg8(mcp23x17_handle, MCP23x17_OLAT(port));
+        int regGPIO  = gpioValues[port] = wiringPiI2CReadReg8(mcp23x17_handle, MCP23x17_GPIO(port));
+
+        iodirValues[port]= regIODIR;
+        olatValues[port] = regOLAT; 
+        gpioValues[port] = regGPIO;
+
+        char binIODIR[10];
+        char binOLAT[10];
+        char binGPIO[10];
+  
+        memset(binIODIR,   0, 10);
+        memset(binOLAT,    0, 10);
+        memset(binGPIO,    0, 10);
+        memset(binIODIR, ' ',  9);
+        memset(binOLAT,  ' ',  9);
+        memset(binGPIO,  ' ',  9);
+
+        printf("port-x descript = xx 0123 4567\n");
+        for (int pin=0;pin<8;++pin) {
+          int pinx = (pin<4) ? pin : 1+pin;
+
+          binIODIR[pinx] = '0' + (regIODIR & 0x01); 
+          binOLAT[pinx]  = '0' + (regOLAT  & 0x01); 
+          binGPIO[pinx]  = '0' + (regGPIO  & 0x01);
+
+          regIODIR = regIODIR >> 1;
+          regOLAT  = regOLAT  >> 1;
+          regGPIO  = regGPIO  >> 1;
+        }
+
+        printf("port-%c regIODIR = %02x %s\n", 'a' + port, iodirValues[port], binIODIR);
+        printf("port-%c regOLAT  = %02x %s\n", 'a' + port, olatValues[port],  binOLAT);
+        printf("port-%c regGPIO  = %02x %s\n", 'a' + port, gpioValues[port],  binGPIO );
+        printf("\n");
     }
 
     for (int port = 0; port < MCP23x17_PORTS; ++port) {
@@ -98,7 +131,7 @@ void readAll() {
 
             modes[port][pin] = iodir;
 
-            if (iodir==0) { //input
+            if (iodir==1) { // 1==input;  0=output
                 values[port][pin] = gpio;
             } else {
                 values[port][pin] = olat;
