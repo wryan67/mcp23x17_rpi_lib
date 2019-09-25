@@ -3,6 +3,9 @@
  *   mcp23x17 extension library for wiringPi           *
  *   written by: Wade Ryan September 2019              *
  *                                                     *
+ *   Utilizes the interrupt pins to facalitate         *
+ *   writing event driven functions                    *
+ *                                                     *
  *******************************************************/
 
 #include "mcp23x17.h"
