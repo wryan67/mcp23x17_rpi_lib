@@ -445,6 +445,22 @@ void mcp23x17_digitalWrite(MCP23x17_GPIO gpio, int value) {
     mcp23x17_setVirtualPinValue(gpio, value);
 }
 
+int  mcp23x17_digitalRead(MCP23x17_GPIO gpio) {
+    unsigned char address = mcp23x17_getAddress(gpio);
+    if (address2handle[address] == -1) {
+        int mcp23x17_handle;
+        if ((mcp23x17_handle = wiringPiI2CSetup(address)) < 0) {
+            fprintf(stderr, "Unable to setup mcp23x17: %s\n", strerror(errno)); fflush(stderr);
+            return -2;
+        } else {
+            address2handle[address] = mcp23x17_handle;
+        }
+    }
+    unsigned char regValue = wiringPiI2CReadReg8(address2handle[address], MCP23x17_GPIO(mcp23x17_getPort(gpio)));
+
+    return 0x01 & (regValue >> mcp23x17_getPin(gpio));
+}
+
 
 unsigned char mcp23x17_virtualReadPort(MCP23x17_ADDRESS address, MCP23x17_PORT port) {
     return portPinValues[address][port];

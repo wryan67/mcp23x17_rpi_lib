@@ -68,6 +68,8 @@ extern "C"
 
     void mcp23x17_digitalWrite(MCP23x17_GPIO gpio, int value);
 
+    int  mcp23x17_digitalRead(MCP23x17_GPIO gpio);
+
     void mcp23x17_setVirtualPinValue(MCP23x17_GPIO gpio, int value);
 
     int mcp23x17_bankAddress(int port, int address);
