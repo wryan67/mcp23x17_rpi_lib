@@ -74,6 +74,8 @@ extern "C"
 
     int mcp23x17_bankAddress(int port, int address);
 
+    void mcp23x17_openHandle(MCP23x17_ADDRESS address);
+
 
 #ifdef __cplusplus
 }  // extern "C"

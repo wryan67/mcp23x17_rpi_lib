@@ -260,12 +260,9 @@ int mcp23x17_setup(int spi, MCP23x17_ADDRESS mcp23x17_address, int mcp23x17_inta
     pullUpDnControl(mcp23x17_intb_pin, PUD_UP);
 
 
-
-    if ((mcp23x17_handle = wiringPiI2CSetup(mcp23x17_address)) < 0) {
-        fprintf(stderr, "Unable to setup mcp23x17: %s\n", strerror(errno)); fflush(stderr);
+    mcp23x17_openHandle(mcp23x17_address);
+    if ((mcp23x17_handle=address2handle[mcp23x17_address]) < 0) {
         return -2;
-    } else {
-        address2handle[mcp23x17_address] = mcp23x17_handle;
     }
 
 
@@ -336,7 +333,7 @@ int mcp23x17_setup(int spi, MCP23x17_ADDRESS mcp23x17_address, int mcp23x17_inta
 
     c = wiringPiI2CReadReg8(mcp23x17_handle, 0x05);
     if (c != 0xA8) {
-        fprintf(stderr, "Unable to setup mcp23x17: check the supplied address: %02x\n", mcp23x17_address); fflush(stderr);
+        fprintf(stderr, "Unable to configure mcp23x17 at address: 0x%02x\n", mcp23x17_address); fflush(stderr);
         return -1;
     }
 
@@ -368,13 +365,13 @@ int mcp23x17_setup(int spi, MCP23x17_ADDRESS mcp23x17_address, int mcp23x17_inta
     // setup interrupt pin event triggers
     if (mcp23x17_inta_pin > 0 && mcp23x17_wiringPiISRWithPin(mcp23x17_inta_pin, INT_EDGE_FALLING, &mcp23x17_inta_activated) < 0)
     {
-        fprintf(stderr, "Unable to setup ISR: %s\n", strerror(errno)); fflush(stderr);
+        fprintf(stderr, "Unable to setup ISR on pin %d: %s\n", mcp23x17_inta_pin, strerror(errno)); fflush(stderr);
         return -1;
     }
 
     if (mcp23x17_inta_pin > 0 && mcp23x17_wiringPiISRWithPin(mcp23x17_intb_pin, INT_EDGE_FALLING, &mcp23x17_intb_activated) < 0)
     {
-        fprintf(stderr, "Unable to setup ISR: %s\n", strerror(errno)); fflush(stderr);
+        fprintf(stderr, "Unable to setup ISR on pin %d: %s\n", mcp23x17_intb_pin, strerror(errno)); fflush(stderr);
         return -1;
     }
 
@@ -440,23 +437,26 @@ void mcp23x17_setPinOutputMode(MCP23x17_GPIO gpio, int initialValue) {
 }
 
 
+
+void mcp23x17_openHandle(MCP23x17_ADDRESS address) {
+    if (address2handle[address] < 0) {
+        address2handle[address] = wiringPiI2CSetup(address);
+        if (address2handle[address] < 0) {
+            fprintf(stderr, "Unable to open handle for mcp23x17 at address 0x%02x: %s\n", address, strerror(errno)); fflush(stderr);
+        }
+    } 
+}
+
 void mcp23x17_digitalWrite(MCP23x17_GPIO gpio, int value) {
+    mcp23x17_openHandle(mcp23x17_getAddress(gpio));
     mcp23x17_updateRegister(0x0A, gpio, value);
     mcp23x17_setVirtualPinValue(gpio, value);
 }
 
 int  mcp23x17_digitalRead(MCP23x17_GPIO gpio) {
-    unsigned char address = mcp23x17_getAddress(gpio);
-    if (address2handle[address] == -1) {
-        int mcp23x17_handle;
-        if ((mcp23x17_handle = wiringPiI2CSetup(address)) < 0) {
-            fprintf(stderr, "Unable to setup mcp23x17: %s\n", strerror(errno)); fflush(stderr);
-            return -2;
-        } else {
-            address2handle[address] = mcp23x17_handle;
-        }
-    }
-    unsigned char regValue = wiringPiI2CReadReg8(address2handle[address], MCP23x17_GPIO(mcp23x17_getPort(gpio)));
+    mcp23x17_openHandle(mcp23x17_getAddress(gpio));
+
+    unsigned char regValue = wiringPiI2CReadReg8(address2handle[mcp23x17_getAddress(gpio)], MCP23x17_GPIO(mcp23x17_getPort(gpio)));
 
     return 0x01 & (regValue >> mcp23x17_getPin(gpio));
 }
