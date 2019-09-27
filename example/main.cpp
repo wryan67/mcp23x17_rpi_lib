@@ -219,10 +219,10 @@ int main(int argc, char **argv) {
 	
 
 	while (true) {
-//        mcp23x17_setPinOutputMode(LED2, HIGH);
-//        delay(1000); fflush(stdout);
+        mcp23x17_setPinOutputMode(LED2, HIGH);
+        delay(1000); fflush(stdout);
 
-//        mcp23x17_setPinOutputMode(LED2, LOW);
+        mcp23x17_setPinOutputMode(LED2, LOW);
         delay(1000); fflush(stdout);
     }
 	return 0;
