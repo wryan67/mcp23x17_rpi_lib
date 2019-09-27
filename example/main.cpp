@@ -5,6 +5,9 @@
  *                                                        *
  *   Please follow the directions to make and install     *
  *   the libaray before compliling this program.          *
+ *                                                        
+ *   $ gcc -o main -lpthread -lwiringPi -lwiringPiMCP23x17 main.cpp 
+ *   $ ./main                                             
  *                                                        *
  *   This program assumes you have an LED plugged         *
  *   into port-B on pin 0 and 1 or more sensors           *
@@ -37,8 +40,6 @@
  *   the MCP23017 can generate arount 2777 interrupts     *
  *   per second, or about 1388 TPS                        *
  *                                                        *
- *   $ gcc -o main -lwiringPi -lwiringPiMCP23x17 main.cpp *
- *   $ ./main                                             *
  **********************************************************/
 #include "../src/mcp23x17.h"
 #include <sys/time.h>
