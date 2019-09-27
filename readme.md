@@ -28,6 +28,8 @@ have WiringPi installed before you can succesfully compile this library.
 To compile this library, navigate into the src folder and use the make utility to compile 
 and install the library.
 
+    $ cd [project folder]
+    $ cd src
     $ make && sudo make install
     $ cd ../utility
     $ make && sudo make install
