@@ -21,41 +21,113 @@
  *   has internal pull-up resistors that can be used      *
  *   for input pins, and this program does use them.      *
  *                                                        *
+ *   Another option would be to simply place a            *
+ *   normally open button between one of the              *
+ *   input pins and ground.                               *
+ *                                                        *
+ *   Note that placing a sensor or button on port-A,      *
+ *   pin #3, will track transactions per second, where    *
+ *   a transaction is considered to be the trigger event  *
+ *   only, so the counter is on the low signal only.      *
+ *   But your device will actually be generating an       *
+ *   interrupt for both the low and high states,          *
+ *   so twice the TPS shown by the counter.               *
+ *                                                        *
+ *   If my math is correct, when operating at 100k htz,   *
+ *   the MCP23017 can generate arount 2777 interrupts     *
+ *   per second, or about 1388 TPS                        *
+ *                                                        *
  *   $ gcc -o main -lwiringPi -lwiringPiMCP23x17 main.cpp *
  *   $ ./main                                             *
  **********************************************************/
 #include "../src/mcp23x17.h"
 #include <sys/time.h>
 
-int mcp23x17_handle   = -1;
-int mcp23x17_address  = 0x20;
+int mcp23x17_handle = -1;
+int mcp23x17_address = 0x20;
 int mcp23x17_inta_pin = 27;
 int mcp23x17_intb_pin = 28;
 
 
-MCP23x17_GPIO LED1;  // PORT-B; pin-0
-MCP23x17_GPIO LED2;  // PORT-A; pin-7
 
-#define led1Pin 0 
-#define led2Pin 7
+MCP23x17_GPIO LED1 = mcp23x17_getGPIO(mcp23x17_address, MCP23x17_PORTB, 0);
+MCP23x17_GPIO LED2 = mcp23x17_getGPIO(mcp23x17_address, MCP23x17_PORTA, 7);
+
+MCP23x17_GPIO northPin_0 = mcp23x17_getGPIO(mcp23x17_address, MCP23x17_PORTA, 0);
+MCP23x17_GPIO northPin_1 = mcp23x17_getGPIO(mcp23x17_address, MCP23x17_PORTA, 1);
+
+MCP23x17_GPIO southPin_6 = mcp23x17_getGPIO(mcp23x17_address, MCP23x17_PORTB, 6);
+MCP23x17_GPIO southPin_7 = mcp23x17_getGPIO(mcp23x17_address, MCP23x17_PORTB, 7);
+
+MCP23x17_GPIO eventPin = mcp23x17_getGPIO(mcp23x17_address, MCP23x17_PORTA, 3);
 
 
 bool ledStatus = false;
+
+
+bool eventTracking = false;
+volatile int events = 0;
+volatile int transactions;
+volatile int staleTimer = 0;
+
 
 unsigned long long currentTimeMillis() {
     struct timeval currentTime;
     gettimeofday(&currentTime, NULL);
 
-    return (unsigned long long)(currentTime.tv_sec)  * 1000 +
-           (unsigned long long)(currentTime.tv_usec) / 1000;
+    return (unsigned long long)(currentTime.tv_sec) * 1000 +
+        (unsigned long long)(currentTime.tv_usec) / 1000;
 }
+
+
 
 
 void toggleLED() {
     ledStatus = !ledStatus;
     mcp23x17_digitalWrite(LED1, ledStatus);
 }
-    
+
+
+void* backgroundCounter(void*) {
+    eventTracking = true;
+    while (true) {
+        delay(1000);
+        int counter = transactions;
+        transactions = 0;
+        printf("epoch=%lld TPS=%4d\n", currentTimeMillis(), counter);
+        if (counter == 0) {
+            if (++staleTimer > 3) {
+                eventTracking = false;
+                pthread_exit(0);
+            }
+        }
+        else if (staleTimer > 0) {
+            staleTimer = 0;
+        }
+    }
+}
+
+void counterMethod(int port, int pin, int value) {
+    if ((++events % 1000) == 0) {
+        printf("%d events\n",events);
+        events = 0;
+    }
+    if (value != 0) {
+        return;
+    }
+    if (!eventTracking) {
+        pthread_t threadId;
+        int status=pthread_create(&threadId, NULL, backgroundCounter, NULL);
+        if (status == 0) {
+            pthread_detach(threadId);
+        } else {
+            fprintf(stderr, "counterMethod::thread create failed %d--%s\n", status, strerror(errno)); fflush(stderr);
+            exit(9);
+        }
+    }
+    ++transactions;
+}
+
 
 void southGate(int port, int pin, int value) {
     toggleLED();
@@ -76,7 +148,7 @@ int setup() {
 		return 9;
 	}
 
-    mcp23x17_setDebug(true);
+    mcp23x17_setDebug(false);
     mcp23x17_handle = mcp23x17_setup(0, mcp23x17_address, mcp23x17_inta_pin, mcp23x17_intb_pin);
 
     if (mcp23x17_handle<0) {
@@ -90,11 +162,6 @@ int setup() {
 
     fprintf(stderr, "init input pins\n");  fflush(stderr);
 
-    MCP23x17_GPIO northPin_0 = mcp23x17_getGPIO(mcp23x17_address, MCP23x17_PORTA, 0);
-    MCP23x17_GPIO northPin_1 = mcp23x17_getGPIO(mcp23x17_address, MCP23x17_PORTA, 1);
-
-    MCP23x17_GPIO southPin_6 = mcp23x17_getGPIO(mcp23x17_address, MCP23x17_PORTB, 6);
-    MCP23x17_GPIO southPin_7 = mcp23x17_getGPIO(mcp23x17_address, MCP23x17_PORTB, 7);
 
     if (mcp23x17_getDebug()) {
         fprintf(stderr, "northPin_0=%04x\n", northPin_0);
@@ -107,10 +174,11 @@ int setup() {
     mcp23x17_setPinInputMode(southPin_6, TRUE, &southGate);
     mcp23x17_setPinInputMode(southPin_7, TRUE, &southGate);
 
+
+    mcp23x17_setPinInputMode(eventPin, TRUE, &counterMethod);
+
     fprintf(stderr, "init output pin\n");  fflush(stderr);
 
-    LED1 = mcp23x17_getGPIO(mcp23x17_address, MCP23x17_PORTB, led1Pin);
-    LED2 = mcp23x17_getGPIO(mcp23x17_address, MCP23x17_PORTA, led2Pin);
     mcp23x17_setPinOutputMode(LED1, LOW);
     mcp23x17_setPinOutputMode(LED2, LOW);
 

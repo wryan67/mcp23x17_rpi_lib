@@ -102,14 +102,8 @@ int mcp23x17_bankAddress(int port, int address) {
     return realAddress;
 }
 
-static volatile long pinExecutions = 0;
-
 void* mcp23x17_pin_execute(void* args) {
     mcp23x17_eventData* eventData = args;
-
-    if ((++pinExecutions % 1000)==0) {
-        printf("%ld pin executions\n",pinExecutions);
-    }
 
     if (debug) {
         fprintf(stderr, "mcp23x17_pin_execute(%02x): port=%d pin=%d value=%dx\n", eventData->mcp23x17_address, eventData->port, eventData->pin, eventData->value); fflush(stderr);
