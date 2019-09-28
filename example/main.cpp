@@ -38,7 +38,14 @@
  *                                                        *
  *   If my math is correct, when operating at 100k htz,   *
  *   the MCP23017 can generate arount 2777 interrupts     *
- *   per second, or about 1388 TPS                        *
+ *   per second, or about 1388 TPS.  In practice though,  *
+ *   I'm seeing consistent results up to 330 TPS          *
+ *   (660 events/interrupts) per second.  Abve that       *
+ *   frequency and events start getting lost.   So,       *
+ *   in practice, I'm seeing about half of what the       *
+ *   expected maximum events should be.  I'm not sure     *
+ *   what the reason is yet.                              *
+ *
  *                                                        *
  **********************************************************/
 #include "../src/mcp23x17.h"
@@ -60,7 +67,7 @@ MCP23x17_GPIO northPin_1 = mcp23x17_getGPIO(mcp23x17_address, MCP23x17_PORTA, 1)
 MCP23x17_GPIO southPin_6 = mcp23x17_getGPIO(mcp23x17_address, MCP23x17_PORTB, 6);
 MCP23x17_GPIO southPin_7 = mcp23x17_getGPIO(mcp23x17_address, MCP23x17_PORTB, 7);
 
-MCP23x17_GPIO eventPin = mcp23x17_getGPIO(mcp23x17_address, MCP23x17_PORTA, 3);
+MCP23x17_GPIO eventPin = mcp23x17_getGPIO(mcp23x17_address, MCP23x17_PORTA, 6);
 
 
 bool ledStatus = false;
@@ -109,7 +116,7 @@ void* backgroundCounter(void*) {
 }
 
 void counterMethod(int port, int pin, int value) {
-    if ((++events % 1000) == 0) {
+    if ((++events % 10000) == 0) {
         printf("%d events\n",events);
         events = 0;
     }
