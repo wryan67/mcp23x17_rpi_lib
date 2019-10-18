@@ -16,16 +16,24 @@
 static volatile unsigned char portPinValues[MCP23x17_MAX_ADDRESS][MCP23x17_PORTS];
 
 static volatile int address2handle[255] = { -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1 };
-static volatile unsigned char gpio2address[255] = { 0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu };
+static volatile unsigned char rpiPin2address[255] = { 0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu };
 
 
 static void (*isrFunctions[255][MCP23x17_PORTS][8])();
 
-static volatile int pinModes[MCP23x17_PORTS][8];
+static volatile unsigned char _address2deviceId[8] = { 0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu,0xFFu };
+static volatile int pinModes[8][MCP23x17_PORTS][8];
 
 static volatile int debug = FALSE;
 
-
+int address2deviceId(unsigned char address) {
+    for (int i = 0; i < 8; ++i) {
+        if (_address2deviceId[i] == address) {
+            return i;
+        }
+    }
+    return -1;
+}
 int mcp23x17_getDebug() {
     return debug;
 }
@@ -44,7 +52,7 @@ void mcp23x17_setHandle(unsigned char mcp23x17_address, int handle) {
 
 
 struct mcp23x17_eventData_struct {
-    unsigned char mcp23x17_address;
+    unsigned char address;
     int rpiPin;
     int port;
     int pin;
@@ -106,10 +114,10 @@ void* mcp23x17_pin_execute(void* args) {
     mcp23x17_eventData* eventData = args;
 
     if (debug) {
-        fprintf(stderr, "mcp23x17_pin_execute(%02x): port=%d pin=%d value=%dx\n", eventData->mcp23x17_address, eventData->port, eventData->pin, eventData->value); fflush(stderr);
+        fprintf(stderr, "mcp23x17_pin_execute(%02x): port=%d pin=%d value=%dx\n", eventData->address, eventData->port, eventData->pin, eventData->value); fflush(stderr);
     }
 
-    isrFunctions[eventData->mcp23x17_address][eventData->port][eventData->pin](eventData->port, eventData->pin, eventData->value);
+    isrFunctions[eventData->address][eventData->port][eventData->pin](eventData->port, eventData->pin, eventData->value);
 
     if (debug) {
         fprintf(stderr, "<<mcp23x17_pin_execute::free--args %p\n", args); fflush(stderr);
@@ -128,7 +136,7 @@ void* mcp23x17_intx_execute(void* args) {
     mcp23x17_eventData* eventData = args;
 
 
-    unsigned char mcp23x17_address = gpio2address[eventData->rpiPin];
+    unsigned char mcp23x17_address = rpiPin2address[eventData->rpiPin];
     int mcp23x17_handle = address2handle[mcp23x17_address];
 
     unsigned char _portValues = portPinValues[mcp23x17_address][eventData->port];
@@ -142,7 +150,7 @@ void* mcp23x17_intx_execute(void* args) {
     }
 
     _newValues = wiringPiI2CReadReg8(mcp23x17_handle, registerAddress);
-    portPinValues[gpio2address[eventData->rpiPin]][eventData->port] = _newValues;
+    portPinValues[mcp23x17_address][eventData->port] = _newValues;
 
     if (debug) {
         fprintf(stderr, "mcp23x17_intx_execute(%02x): after  pinValuesPort[0]=%02x\n", mcp23x17_address, portPinValues[mcp23x17_address][0]);
@@ -156,12 +164,12 @@ void* mcp23x17_intx_execute(void* args) {
         _portValues = _portValues >> 1;
         _newValues = _newValues   >> 1;
 
-        if (x1 != x2 && pinModes[eventData->port][i] == INPUT) {
+        if (x1 != x2 && pinModes[address2deviceId(eventData->address)][eventData->port][i] == INPUT) {
             sprintf(description, "mcp23x17_int%c_pin_%d_execute", 97 + eventData->port, x2);
 
             eventData->pin   = i;
             eventData->value = x2;
-            eventData->mcp23x17_address = mcp23x17_address;
+            eventData->address = mcp23x17_address;
 
             mcp23x17_createThread(mcp23x17_pin_execute, description, *eventData);
 
@@ -250,6 +258,18 @@ int mcp23x17_setup(int spi, MCP23x17_ADDRESS mcp23x17_address, int mcp23x17_inta
         return -1;
     }
 
+    int id = 0;
+    for (id = 0; id < 8; ++id) {
+        if (_address2deviceId[id] == 0xFFu) {
+            _address2deviceId[id] = mcp23x17_address;
+            break;
+        }
+    }
+    if (id >= 8) {
+        fprintf(stderr, "only 8 mcp23017 devices are supported\n");
+        return -1;
+    }
+
     pinMode(mcp23x17_intb_pin, INPUT);
     pullUpDnControl(mcp23x17_intb_pin, PUD_UP);
 
@@ -264,21 +284,21 @@ int mcp23x17_setup(int spi, MCP23x17_ADDRESS mcp23x17_address, int mcp23x17_inta
         pinMode(mcp23x17_inta_pin, INPUT);
         pullUpDnControl(mcp23x17_inta_pin, PUD_UP);
 
-        if (gpio2address[mcp23x17_inta_pin] != 0xFFu) {
+        if (rpiPin2address[mcp23x17_inta_pin] != 0xFFu) {
             fprintf(stderr, "gpio pin %d (inta) is already associated with a different address, namely %02x\n",
-                mcp23x17_inta_pin, gpio2address[mcp23x17_inta_pin]); fflush(stderr);
+                mcp23x17_inta_pin, rpiPin2address[mcp23x17_inta_pin]); fflush(stderr);
             return -3;
         }
-        gpio2address[mcp23x17_inta_pin] = mcp23x17_address;
+        rpiPin2address[mcp23x17_inta_pin] = mcp23x17_address;
     }
 
     if (mcp23x17_intb_pin >= 0 && mcp23x17_inta_pin != mcp23x17_intb_pin) {
-        if (gpio2address[mcp23x17_intb_pin] != 0xFFu) {
+        if (rpiPin2address[mcp23x17_intb_pin] != 0xFFu) {
             fprintf(stderr, "gpio pin %d (intb) is already associated with a different address, namely %02x\n",
-                mcp23x17_intb_pin, gpio2address[mcp23x17_intb_pin]); fflush(stderr);
+                mcp23x17_intb_pin, rpiPin2address[mcp23x17_intb_pin]); fflush(stderr);
             return -4;
         }
-        gpio2address[mcp23x17_intb_pin] = mcp23x17_address;
+        rpiPin2address[mcp23x17_intb_pin] = mcp23x17_address;
     }
 
 
@@ -286,9 +306,9 @@ int mcp23x17_setup(int spi, MCP23x17_ADDRESS mcp23x17_address, int mcp23x17_inta
         fprintf(stderr, "args:    mcp23x17_handle=%d mcp23x17_address=%02x mcp23x17_inta_pin=%d mcp23x17_intb_pin=%d\n", 
                                   mcp23x17_handle,   mcp23x17_address,     mcp23x17_inta_pin,   mcp23x17_intb_pin);
         fprintf(stderr, "setup-a: mcp23x17_handle=%d mcp23x17_address=%02x \n", 
-                                  address2handle[gpio2address[mcp23x17_inta_pin]],  gpio2address[mcp23x17_inta_pin] );
+                                  address2handle[rpiPin2address[mcp23x17_inta_pin]],  rpiPin2address[mcp23x17_inta_pin] );
         fprintf(stderr, "setup-b: mcp23x17_handle=%d mcp23x17_address=%02x \n",
-                                  address2handle[gpio2address[mcp23x17_intb_pin]], gpio2address[mcp23x17_intb_pin]);
+                                  address2handle[rpiPin2address[mcp23x17_intb_pin]], rpiPin2address[mcp23x17_intb_pin]);
     }
 
 
@@ -320,7 +340,7 @@ int mcp23x17_setup(int spi, MCP23x17_ADDRESS mcp23x17_address, int mcp23x17_inta
     c = wiringPiI2CReadReg8(mcp23x17_handle, 0x0a); 
     wiringPiI2CWriteReg8(mcp23x17_handle, 0x0a, c | 0x80);
     delay(5);
-
+    
     // set non-seq; 8-bit config        (IOCON)
     wiringPiI2CWriteReg8(mcp23x17_handle, 0x05, 0xA8);
     delay(5);
@@ -383,11 +403,12 @@ void mcp23x17_setPinInputMode(MCP23x17_GPIO gpio, int enablePullUp, void (*funct
     int address = mcp23x17_getAddress(gpio);
     int port    = mcp23x17_getPort(gpio);
     int pin     = mcp23x17_getPin(gpio);
+    int deviceId = address2deviceId(address);
 
     int saveModes[8];
     for (int i = 0; i < 8; ++i) {
-        saveModes[i] = pinModes[port][i];
-        pinModes[port][i] = OUTPUT;
+        saveModes[i] = pinModes[deviceId][port][i];
+        pinModes[deviceId][port][i] = OUTPUT;
     }
 
     mcp23x17_updateRegister(0x00, gpio, 1);                // output mode
@@ -406,7 +427,7 @@ void mcp23x17_setPinInputMode(MCP23x17_GPIO gpio, int enablePullUp, void (*funct
     isrFunctions[address][port][pin] = function;
 
     for (int i = 0; i < 8; ++i) {
-        pinModes[port][i] = saveModes[i];
+        pinModes[deviceId][port][i] = saveModes[i];
     }
 
     if (debug) {
@@ -419,8 +440,9 @@ void mcp23x17_setPinInputMode(MCP23x17_GPIO gpio, int enablePullUp, void (*funct
 void mcp23x17_setPinOutputMode(MCP23x17_GPIO gpio, int initialValue) {
     int port = mcp23x17_getPort(gpio);
     int pin  = mcp23x17_getPin(gpio);
+    int deviceId = address2deviceId(mcp23x17_getAddress(gpio));
 
-    pinModes[port][pin]=OUTPUT;
+    pinModes[deviceId][port][pin]=OUTPUT;
 
     if (debug) {
         fprintf(stderr, "mcp23x17_setPinOutputMode port=%c, pin=%d initialValue=%d\n", 65 + port, pin, initialValue);
