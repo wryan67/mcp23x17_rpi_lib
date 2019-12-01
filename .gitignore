@@ -6,6 +6,9 @@
 *.user
 *.userosscache
 *.sln.docstates
+*.o
+*libwiringPiMCP23x17.so*
+utility/mcp23x17
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs

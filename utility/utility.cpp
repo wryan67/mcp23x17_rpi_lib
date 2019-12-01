@@ -14,8 +14,6 @@ Options options = Options();
 int mcp23x17_handle = -1;
 
 int mcp23x17_softSetup(int spi, int mcp23x17_address) {
-    unsigned char c;
-
     if (spi != 0) {
         fprintf(stderr, "SPI mode is not implemented yet\n"); fflush(stderr);
         return -2;
@@ -164,6 +162,24 @@ void readAll() {
     fflush(stdout);
 }
 
+void doNothing(int port, int pin, int value) {
+  return;
+}
+
+void setMode() {
+   switch (options.mode) {
+   case 'o':
+     mcp23x17_setPinOutputMode(mcp23x17_getGPIO(options.i2cAddress, options.port, options.pin), options.value);
+     break;
+
+   case 'i':
+     mcp23x17_setPinInputMode(mcp23x17_getGPIO(options.i2cAddress, options.port, options.pin), options.value, doNothing);
+     break;
+
+   }  
+   return;
+}
+
 int main(int argc, char **argv)
 {
     if (!options.commandLineOptions(argc, argv)) {
@@ -180,6 +196,9 @@ int main(int argc, char **argv)
         break;
 
     case 'w': write2pin();
+        break;
+		    
+    case 'm': setMode();
         break;
 		    
 
