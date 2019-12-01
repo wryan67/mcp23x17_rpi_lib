@@ -181,9 +181,10 @@ int main(int argc, char **argv)
 
     case 'w': write2pin();
         break;
+		    
 
     default:
-        fprintf(stderr, "action %c is not implemented yet\n", options.mode);
+        fprintf(stderr, "action %c is not implemented yet\n", options.action);
         break;
     }
 
