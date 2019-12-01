@@ -34,7 +34,7 @@ and install the library.
     $ cd ../utility
     $ make && sudo make install
 
-## Compileing
+## Compiling
 Complie your applications using these command line arguments: -lwiringPi -lwiringPiMCP23x17
 
 ## Examples
