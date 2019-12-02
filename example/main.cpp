@@ -5,9 +5,9 @@
  *                                                        *
  *   Please follow the directions to make and install     *
  *   the libaray before compliling this program.          *
- *
- *   $ gcc -o main -lpthread -lwiringPi -lwiringPiMCP23x17 main.cpp
- *   $ ./main
+ *                                                        *
+ *   $ make                                               *
+ *   $ ./example                                          *
  *                                                        *
  *                                                        *
  **********************************************************/

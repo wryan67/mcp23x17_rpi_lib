@@ -1,5 +1,5 @@
 #include <wiringPi.h>
-#include <mcp23x17.h>
+#include <mcp23x17rpi.h>
 #include "Options.h"
 
 // LED Pin - wiringPi pin 0 is BCM_GPIO 17.

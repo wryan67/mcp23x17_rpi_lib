@@ -86,7 +86,7 @@ bool Options::commandLineOptions(int argc, char** argv) {
         case 'm':
         {
             action = 'm';
-            sscanf(optarg, "%s", &modeName);
+            sscanf(optarg, "%s", modeName);
             mode = tolower(modeName[0]);
             break;
         }
