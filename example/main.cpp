@@ -11,7 +11,7 @@
  *                                                        *
  *                                                        *
  **********************************************************/
-#include <mcp23x17.h>
+#include <mcp23x17rpi.h>
 #include <sys/time.h>
 #include <limits.h>
 

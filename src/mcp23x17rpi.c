@@ -8,7 +8,7 @@
  *                                                     *
  *******************************************************/
 
-#include "mcp23x17.h"
+#include "mcp23x17rpi.h"
 #include "mcp23x17_threads.h"
 
 // static int mcp23x17_handle;
