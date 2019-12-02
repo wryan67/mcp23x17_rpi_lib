@@ -47,7 +47,7 @@ LIBS    =
 
 ###############################################################################
 
-SRC	= mcp23x17.c mcp23x17_threads.c
+SRC	= mcp23x17rpi.c mcp23x17_threads.c
 
 OBJ	=	$(SRC:.c=.o)
 
@@ -81,7 +81,7 @@ tags:	$(SRC)
 install-headers:
 	@echo "[Install Headers]"
 	@install -m 0755 -d			$(DESTDIR)$(PREFIX)/include
-	@install -m 0644 mcp23x17.h		$(DESTDIR)$(PREFIX)/include
+	@install -m 0644 mcp23x17rpi.h		$(DESTDIR)$(PREFIX)/include
 
 install:	$(DYNAMIC) install-headers
 	@echo "[Install Dynamic Lib]"
@@ -97,7 +97,7 @@ install-static:	$(STATIC) install-headers
 
 uninstall:
 	@echo "[UnInstall]"
-	@rm -f $(DESTDIR)$(PREFIX)/include/mcp23x17.h
+	@rm -f $(DESTDIR)$(PREFIX)/include/mcp23x17rpi.h
 	@rm -f $(DESTDIR)$(PREFIX)/lib/libwiringPiMCP23x17.*
 	@ldconfig
 
@@ -105,5 +105,4 @@ uninstall:
 depend:
 	makedepend -Y $(SRC)
 
-
-libwiringPiMCP23x17.o: mcp23x17.h
+libwiringPiMCP23x17rpi.o: mcp23x17rpi.h
