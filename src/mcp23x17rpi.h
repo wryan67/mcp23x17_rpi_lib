@@ -77,7 +77,7 @@ extern "C"
 
     void mcp23x17_openHandle(MCP23x17_ADDRESS address);
 
-    MCP23x17_GPIO getEnvMCP23x17_GPIO(char* var);
+    MCP23x17_GPIO getEnvMCP23x17_GPIO(const char* var);
 
 #ifdef __cplusplus
 }  // extern "C"

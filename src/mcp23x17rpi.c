@@ -501,7 +501,7 @@ void mcp23x17_setVirtualPinValue(MCP23x17_GPIO gpio, int value) {
 }
 
 
-MCP23x17_GPIO getEnvMCP23x17_GPIO(char* var) {
+MCP23x17_GPIO getEnvMCP23x17_GPIO(const char* var) {
     if (!var) {
         fprintf(stderr, "Could not locate NULL in the environment variables\n");
         exit(EXIT_FAILURE);
