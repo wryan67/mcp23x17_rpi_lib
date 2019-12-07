@@ -4,7 +4,7 @@
 #include <getopt.h>
 #include <stdlib.h>
 #include <ctype.h>
-#include <mcp23x17.h>
+#include <mcp23x17rpi.h>
 
 
 

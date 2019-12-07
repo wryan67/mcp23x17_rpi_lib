@@ -5,13 +5,13 @@
  *                                                        *
  *   Please follow the directions to make and install     *
  *   the libaray before compliling this program.          *
- *
- *   $ gcc -o main -lpthread -lwiringPi -lwiringPiMCP23x17 main.cpp
- *   $ ./main
+ *                                                        *
+ *   $ make                                               *
+ *   $ ./example                                          *
  *                                                        *
  *                                                        *
  **********************************************************/
-#include <mcp23x17.h>
+#include <mcp23x17rpi.h>
 #include <sys/time.h>
 #include <limits.h>
 

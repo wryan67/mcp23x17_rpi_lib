@@ -19,14 +19,15 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{7c2ccb1d-0428-4c1e-9cdd-1898c330a492}</ProjectGuid>
+    <ProjectGuid>{ef3e3852-14c9-11ea-8a32-5b4492f0be36}</ProjectGuid>
     <Keyword>Linux</Keyword>
-    <RootNamespace>mcp23x17</RootNamespace>
+    <RootNamespace>utility</RootNamespace>
     <MinimumVisualStudioVersion>15.0</MinimumVisualStudioVersion>
     <ApplicationType>Linux</ApplicationType>
     <ApplicationTypeRevision>1.0</ApplicationTypeRevision>
     <TargetLinuxPlatform>Raspberry</TargetLinuxPlatform>
     <LinuxProjectType>{8748239F-558C-44D1-944B-07B09C35B330}</LinuxProjectType>
+    <ProjectName>mcp23x17_example</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'" Label="Configuration">
@@ -48,7 +49,7 @@
   <PropertyGroup Label="UserMacros" />
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
     <Link>
-      <LibraryDependencies>pthread; wiringPi; </LibraryDependencies>
+      <LibraryDependencies>wiringPi; wiringPiMCP23x17rpi</LibraryDependencies>
     </Link>
     <RemotePostBuildEvent>
       <Command>gpio export 17 out</Command>
@@ -65,16 +66,10 @@
     </RemotePostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="example\main.cpp" />
-    <ClCompile Include="src\mcp23x17.c" />
-    <ClCompile Include="src\mcp23x17_threads.c" />
+    <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\mcp23x17.h" />
-    <ClInclude Include="src\mcp23x17_threads.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="src\Makefile" />
+    <None Include="Makefile" />
   </ItemGroup>
   <ItemDefinitionGroup />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

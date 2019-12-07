@@ -32,8 +32,8 @@ VERSION=$(DYN_VERS_MAJ).$(DYN_VERS_MIN)
 DESTDIR=/usr
 PREFIX=/local
 
-STATIC=libwiringPiMCP23x17.a
-DYNAMIC=libwiringPiMCP23x17.so.$(VERSION)
+STATIC=libwiringPiMCP23x17rpi.a
+DYNAMIC=libwiringPiMCP23x17rpi.so.$(VERSION)
 
 # Use this line for debugging:
 # DEBUG	= -g -O0 -rdynamic
@@ -47,7 +47,7 @@ LIBS    =
 
 ###############################################################################
 
-SRC	= mcp23x17.c mcp23x17_threads.c
+SRC	= mcp23x17rpi.c mcp23x17_threads.c
 
 OBJ	=	$(SRC:.c=.o)
 
@@ -63,7 +63,7 @@ $(STATIC):	$(OBJ)
 
 $(DYNAMIC):	$(OBJ)
 	@echo "[Link (Dynamic)]"
-	@$(CC) -shared -Wl,-soname,libwiringPiMCP23x17.so -o libwiringPiMCP23x17.so.$(VERSION) -lpthread $(OBJ)
+	@$(CC) -shared -Wl,-soname,libwiringPiMCP23x17rpi.so -o libwiringPiMCP23x17rpi.so.$(VERSION) -lpthread $(OBJ)
 
 .c.o:
 	@echo [Compile] $<
@@ -71,7 +71,7 @@ $(DYNAMIC):	$(OBJ)
 
 clean:
 	@echo "[Clean]"
-	@rm -f $(OBJ) $(OBJ_I2C) *~ core tags Makefile.bak libwiringPiMCP23x17.*
+	@rm -f $(OBJ) $(OBJ_I2C) *~ core tags Makefile.bak libwiringPiMCP23x17rpi.*
 
 tags:	$(SRC)
 	@echo [ctags]
@@ -81,29 +81,28 @@ tags:	$(SRC)
 install-headers:
 	@echo "[Install Headers]"
 	@install -m 0755 -d			$(DESTDIR)$(PREFIX)/include
-	@install -m 0644 mcp23x17.h		$(DESTDIR)$(PREFIX)/include
+	@install -m 0644 mcp23x17rpi.h		$(DESTDIR)$(PREFIX)/include
 
 install:	$(DYNAMIC) install-headers
 	@echo "[Install Dynamic Lib]"
 	@install -m 0755 -d						$(DESTDIR)$(PREFIX)/lib
-	@install -m 0755 libwiringPiMCP23x17.so.$(VERSION)			$(DESTDIR)$(PREFIX)/lib/libwiringPiMCP23x17.so.$(VERSION)
-	@ln -sf $(DESTDIR)$(PREFIX)/lib/libwiringPiMCP23x17.so.$(VERSION)	$(DESTDIR)/lib/libwiringPiMCP23x17.so
+	@install -m 0755 libwiringPiMCP23x17rpi.so.$(VERSION)			$(DESTDIR)$(PREFIX)/lib/libwiringPiMCP23x17rpi.so.$(VERSION)
+	@ln -sf $(DESTDIR)$(PREFIX)/lib/libwiringPiMCP23x17rpi.so.$(VERSION)	$(DESTDIR)/lib/libwiringPiMCP23x17rpi.so
 	@ldconfig
 
 install-static:	$(STATIC) install-headers
 	@echo "[Install Static Lib]"
 	@install -m 0755 -d			$(DESTDIR)$(PREFIX)/lib
-	@install -m 0755 libwiringPiMCP23x17.a	$(DESTDIR)$(PREFIX)/lib
+	@install -m 0755 libwiringPiMCP23x17rpi.a	$(DESTDIR)$(PREFIX)/lib
 
 uninstall:
 	@echo "[UnInstall]"
-	@rm -f $(DESTDIR)$(PREFIX)/include/mcp23x17.h
-	@rm -f $(DESTDIR)$(PREFIX)/lib/libwiringPiMCP23x17.*
+	@rm -f $(DESTDIR)$(PREFIX)/include/mcp23x17rpi.h
+	@rm -f $(DESTDIR)$(PREFIX)/lib/libwiringPiMCP23x17rpi.*
 	@ldconfig
 
 
 depend:
 	makedepend -Y $(SRC)
 
-
-libwiringPiMCP23x17.o: mcp23x17.h
+libwiringPiMCP23x17rpi.o: mcp23x17rpi.h

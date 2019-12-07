@@ -51,7 +51,7 @@ all:  $(TARGET)
 
 $(TARGET): $(OBJ)
 	@echo "[Link]"
-	@$(CC) $(CFLAGS) -lwiringPi -lwiringPiMCP23x17 -pthread *.o -o $(TARGET) 
+	@$(CC) $(CFLAGS) -lwiringPi -lwiringPiMCP23x17rpi -pthread *.o -o $(TARGET) 
 
 clean:
 	@echo "[Clean]"
