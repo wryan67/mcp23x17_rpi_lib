@@ -499,3 +499,37 @@ void mcp23x17_setVirtualPinValue(MCP23x17_GPIO gpio, int value) {
         portPinValues[mcp23x17_getAddress(gpio)][mcp23x17_getPort(gpio)] &= ~pinIndex;
     }
 }
+
+
+MCP23x17_GPIO getEnvMCP23x17_GPIO(char* var) {
+    if (!var) {
+        fprintf(stderr, "Could not locate NULL in the environment variables\n");
+        exit(EXIT_FAILURE);
+    }
+    if (getenv(var)) {
+        int address;
+        int port;
+        int pin;
+        char cPort;
+        int offset = 0;
+
+        if (strncmp(getenv(var), "0x", 2) == 0) {
+            offset = 2;
+        }
+
+        sscanf(getenv(var)+offset, "%x_%c_%d", &address, &cPort, &pin);
+        port = toupper(cPort) - 'A';
+
+        if (debug) {
+          printf("setting up mcp23x17_gpio pin on address=%02x, port=%c, pin=%d\n", address, port + 'A', pin);
+        }
+
+        MCP23x17_GPIO value= mcp23x17_getGPIO(address, port, pin); 
+
+        return value;
+    } else {
+        fprintf(stderr, "Could not locate '%s' in the environment variables\n", var);
+        exit(EXIT_FAILURE);
+    }
+}
+
