@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
+#include <ctype.h>
 #include <pthread.h>
 #include <wiringPi.h>
 #include <wiringPiI2C.h>
