@@ -162,7 +162,7 @@ void readAll() {
     fflush(stdout);
 }
 
-void doNothing(int port, int pin, int value) {
+void doNothing(MCP23x17_GPIO gpio, int value) {
   return;
 }
 
