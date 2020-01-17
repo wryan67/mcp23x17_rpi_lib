@@ -66,15 +66,15 @@
     </RemotePostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\mcp23x17.c" />
-    <ClCompile Include="src\mcp23x17_threads.c" />
+    <ClCompile Include="mcp23x17rpi.c" />
+    <ClCompile Include="mcp23x17_threads.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\mcp23x17.h" />
-    <ClInclude Include="src\mcp23x17_threads.h" />
+    <ClInclude Include="mcp23x17rpi.h" />
+    <ClInclude Include="mcp23x17_threads.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="src\Makefile" />
+    <None Include="Makefile" />
   </ItemGroup>
   <ItemDefinitionGroup />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

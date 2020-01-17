@@ -15,6 +15,9 @@
 #include <wiringPi.h>
 #include <wiringPiI2C.h>
 
+#ifndef NULL
+#define NULL 0
+#endif
 
 #define MCP23x17_PORTS 2
 #define MCP23x17_PORTA 0
@@ -52,14 +55,12 @@ extern "C"
 
     int mcp23x17_setup(int spi, MCP23x17_ADDRESS mcp23x17_address, int mcp23x17_inta_pin, int mcp23x17_intb_pin);
 
-    int mcp23x17_getHandle(MCP23x17_ADDRESS address);
-
     MCP23x17_GPIO    mcp23x17_getGPIO(MCP23x17_ADDRESS address, MCP23x17_PORT port, MCP23x17_PIN pin);
     MCP23x17_PIN     mcp23x17_getPin(MCP23x17_GPIO gpio);
     MCP23x17_PORT    mcp23x17_getPort(MCP23x17_GPIO gpio);
     MCP23x17_ADDRESS mcp23x17_getAddress(MCP23x17_GPIO gpio);
 
-    void mcp23x17_setPinInputMode(MCP23x17_GPIO gpio, int enablePullUp, void (*function)(int port, int pin, int value));
+    void mcp23x17_setPinInputMode(MCP23x17_GPIO gpio, int enablePullUp, void (*function)(MCP23x17_GPIO pin, int value));
 
     void mcp23x17_setPinOutputMode(MCP23x17_GPIO gpio, int initialValue);
 
