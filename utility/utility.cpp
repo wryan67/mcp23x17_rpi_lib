@@ -169,13 +169,15 @@ void doNothing(MCP23x17_GPIO gpio, int value) {
 void setMode() {
    switch (options.mode) {
    case 'o':
-     mcp23x17_setPinOutputMode(mcp23x17_getGPIO(options.i2cAddress, options.port, options.pin), options.value);
-     break;
+       mcp23x17_setPinOutputMode(mcp23x17_getGPIO(options.i2cAddress, options.port, options.pin), options.value);
+       break;
 
    case 'i':
-     mcp23x17_setPinInputMode(mcp23x17_getGPIO(options.i2cAddress, options.port, options.pin), options.value, doNothing);
-     break;
-
+       if (options.value < 0) {
+           options.value = 1;
+       }
+       mcp23x17_setPinInputMode(mcp23x17_getGPIO(options.i2cAddress, options.port, options.pin), options.value, doNothing);
+       break;
    }  
    return;
 }
