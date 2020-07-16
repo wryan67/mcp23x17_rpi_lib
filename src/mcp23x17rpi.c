@@ -125,6 +125,7 @@ void* mcp23x17_pin_execute(void* args) {
     }
 
     free(args);
+    pthread_detach(pthread_self());
     pthread_exit(NULL);
 }
 
@@ -182,6 +183,7 @@ void* mcp23x17_intx_execute(void* args) {
     }
 
     free(args);
+    pthread_detach(pthread_self());
     pthread_exit(NULL);
 }
 
