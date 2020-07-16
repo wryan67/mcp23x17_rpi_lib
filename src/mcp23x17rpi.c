@@ -117,7 +117,8 @@ void* mcp23x17_pin_execute(void* args) {
         fprintf(stderr, "mcp23x17_pin_execute(%02x): port=%d pin=%d value=%dx\n", eventData->address, eventData->port, eventData->pin, eventData->value); fflush(stderr);
     }
 
-    isrFunctions[eventData->address][eventData->port][eventData->pin](eventData->port, eventData->pin, eventData->value);
+    MCP23x17_GPIO pin = mcp23x17_getGPIO(eventData->address, eventData->port, eventData->pin);
+    isrFunctions[eventData->address][eventData->port][eventData->pin](pin, eventData->value);
 
     if (debug) {
         fprintf(stderr, "<<mcp23x17_pin_execute::free--args %p\n", args); fflush(stderr);
@@ -399,7 +400,7 @@ int mcp23x17_setup(int spi, MCP23x17_ADDRESS mcp23x17_address, int mcp23x17_inta
 
 
 
-void mcp23x17_setPinInputMode(MCP23x17_GPIO gpio, int enablePullUp, void (*function)(int port, int pin, int value)) {
+void mcp23x17_setPinInputMode(MCP23x17_GPIO gpio, int enablePullUp, void (*function)(MCP23x17_GPIO pin, int value)) {
     int address = mcp23x17_getAddress(gpio);
     int port    = mcp23x17_getPort(gpio);
     int pin     = mcp23x17_getPin(gpio);
@@ -499,3 +500,37 @@ void mcp23x17_setVirtualPinValue(MCP23x17_GPIO gpio, int value) {
         portPinValues[mcp23x17_getAddress(gpio)][mcp23x17_getPort(gpio)] &= ~pinIndex;
     }
 }
+
+
+MCP23x17_GPIO getEnvMCP23x17_GPIO(const char* var) {
+    if (!var) {
+        fprintf(stderr, "Could not locate NULL in the environment variables\n");
+        exit(EXIT_FAILURE);
+    }
+    if (getenv(var)) {
+        int address;
+        int port;
+        int pin;
+        char cPort;
+        int offset = 0;
+
+        if (strncmp(getenv(var), "0x", 2) == 0) {
+            offset = 2;
+        }
+
+        sscanf(getenv(var)+offset, "%x_%c_%d", &address, &cPort, &pin);
+        port = toupper(cPort) - 'A';
+
+        if (debug) {
+          printf("setting up mcp23x17_gpio pin on address=%02x, port=%c, pin=%d\n", address, port + 'A', pin);
+        }
+
+        MCP23x17_GPIO value= mcp23x17_getGPIO(address, port, pin); 
+
+        return value;
+    } else {
+        fprintf(stderr, "Could not locate '%s' in the environment variables\n", var);
+        exit(EXIT_FAILURE);
+    }
+}
+

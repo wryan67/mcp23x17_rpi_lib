@@ -65,11 +65,11 @@ void* backgroundCounter(void*) {
         }
     }
 }
-void testMethod(int port, int pin, int value) {
+void testMethod(MCP23x17_GPIO gpio, int value) {
     printf("test method invoked\n");
 }
 
-void counterMethod(int port, int pin, int value) {
+void counterMethod(MCP23x17_GPIO gpio, int value) {
     if ((++events % 10000) == 0) {
         printf("%d events\n", events);
         events = 0;
