@@ -12,18 +12,6 @@ volatile int mcp23x17_sysFds[64] =
 static void (*isrFunctionsWithPin[256])(int);
 
 
-//pthread_t mcp23x17_threadCreate(void* (*method)(void*), char* description, void* arg) {
-//    pthread_t threadId;
-//
-//    int status = pthread_create(&threadId, NULL, method, arg);
-//    if (status != 0) {
-//        printf("%s::thread create failed %d--%s\n", description, status, strerror(errno));
-//        exit(9);
-//    }
-//    pthread_detach(threadId);
-//    return threadId;
-//}
-
 
 int mcp23x17_waitForInterruptWithPin(int pin, int mS) {
     int fd, x;
@@ -186,8 +174,8 @@ int mcp23x17_wiringPiISRWithPin(int pin, int mode, void (*function)(int pin)) {
         fprintf(stderr, "<<mcp23x17_wiringPiISRWithPin::alloc--args %p\n", permPin); fflush(stderr);
     }
     pthread_create(&threadId, NULL, mcp23x17_interruptHandlerWithPin, (void*)(permPin));
+    pthread_detach(threadId);
 
- 
 
     return 0;
 
