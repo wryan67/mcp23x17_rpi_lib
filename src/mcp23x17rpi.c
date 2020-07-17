@@ -26,6 +26,9 @@ static volatile int pinModes[8][MCP23x17_PORTS][8];
 
 static volatile int debug = FALSE;
 
+static volatile pthread_mutex_t intxLock[2];
+
+
 int address2deviceId(unsigned char address) {
     for (int i = 0; i < 8; ++i) {
         if (_address2deviceId[i] == address) {
@@ -96,7 +99,7 @@ pthread_t mcp23x17_createThread(void* (*method)(void*), char* description, mcp23
         exit(9);
     }
 
-    pthread_detach(threadId);
+//    pthread_detach(threadId);
     return threadId;
 }
 
@@ -141,6 +144,9 @@ void* mcp23x17_intx_execute(void* args) {
     unsigned char mcp23x17_address = rpiPin2address[eventData->rpiPin];
     int mcp23x17_handle = address2handle[mcp23x17_address];
 
+
+    pthread_mutex_lock(&intxLock[eventData->port]);
+
     unsigned char _portValues = portPinValues[mcp23x17_address][eventData->port];
     unsigned char _newValues;
     unsigned char registerAddress = MCP23x17_INTCAP(eventData->port);
@@ -158,6 +164,9 @@ void* mcp23x17_intx_execute(void* args) {
         fprintf(stderr, "mcp23x17_intx_execute(%02x): after  pinValuesPort[0]=%02x\n", mcp23x17_address, portPinValues[mcp23x17_address][0]);
         fprintf(stderr, "mcp23x17_intx_execute(%02x): after  pinValuesPort[1]=%02x\n", mcp23x17_address, portPinValues[mcp23x17_address][1]); fflush(stderr);
     }
+
+    pthread_mutex_unlock(&intxLock[eventData->port]);
+
 
     for (int i = 0; i < 8; ++i) {
         int x1 = _portValues & 0x01;
@@ -255,6 +264,13 @@ void mcp23x17_updateRegister(int registerAddress, MCP23x17_GPIO gpio, int value)
 int mcp23x17_setup(int spi, MCP23x17_ADDRESS mcp23x17_address, int mcp23x17_inta_pin, int mcp23x17_intb_pin) {
     unsigned char c;
     int mcp23x17_handle;
+
+    for (int i = 0; i < 2; ++i) {
+        if (pthread_mutex_init(&intxLock[i], NULL) != 0) {
+            printf("\n mutex initialization has failed\n");
+            return 1;
+        }
+    }
 
     if (spi != 0) {
         fprintf(stderr, "SPI mode is not implemented yet\n"); fflush(stderr);
@@ -422,7 +438,10 @@ void mcp23x17_setPinInputMode(MCP23x17_GPIO gpio, int enablePullUp, void (*funct
     mcp23x17_updateRegister(0x03, gpio, 1);                // DEFVAL    Compare IOC          0=Rising;    1=falling
     mcp23x17_updateRegister(0x04, gpio, 0);                // INTCON    Interrupt Control    0=AnyChange; 1=DEFVAL
 
+    pthread_mutex_lock(&intxLock[port]);
     portPinValues[address][port] = wiringPiI2CReadReg8(address2handle[address], mcp23x17_bankAddress(port, 0x09));   // GPIO
+    int portValues = portPinValues[address][port];
+    pthread_mutex_unlock(&intxLock[port]);
 
     mcp23x17_updateRegister(0x02, gpio, 1);                // GPINTEN   Interupt On Change   0=disabled;  1=enabled
 
@@ -435,7 +454,7 @@ void mcp23x17_setPinInputMode(MCP23x17_GPIO gpio, int enablePullUp, void (*funct
 
     if (debug) {
         fprintf(stderr, "mcp23x17_setPinInputMode(%02x)::set port %d, pin %d as input\n", address, port, pin);
-        fprintf(stderr, "mcp23x17_setPinInputMode(%02x)::portPinValues[%02x][%d]=%02x\n", address, address, port, portPinValues[address][port]); fflush(stderr);
+        fprintf(stderr, "mcp23x17_setPinInputMode(%02x)::portPinValues[%02x][%d]=%02x\n", address, address, port, portValues); fflush(stderr);
     }
 }
 
@@ -496,11 +515,17 @@ int mcp23x17_virtualRead(MCP23x17_GPIO gpio) {
 void mcp23x17_setVirtualPinValue(MCP23x17_GPIO gpio, int value) {
     unsigned char pinIndex = 1 << mcp23x17_getPin(gpio);
 
+    int port = mcp23x17_getPort(gpio);
+    pthread_mutex_lock(&intxLock[port]);
+
     if (value == 1) {
-        portPinValues[mcp23x17_getAddress(gpio)][mcp23x17_getPort(gpio)] |= pinIndex;
+        portPinValues[mcp23x17_getAddress(gpio)][port] |= pinIndex;
     } else {
-        portPinValues[mcp23x17_getAddress(gpio)][mcp23x17_getPort(gpio)] &= ~pinIndex;
+        portPinValues[mcp23x17_getAddress(gpio)][port] &= ~pinIndex;
     }
+
+    pthread_mutex_unlock(&intxLock[port]);
+
 }
 
 
