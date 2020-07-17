@@ -26,7 +26,7 @@ static volatile int pinModes[8][MCP23x17_PORTS][8];
 
 static volatile int debug = FALSE;
 
-static volatile pthread_mutex_t intxLock[2];
+static pthread_mutex_t intxLock[2];
 
 
 int address2deviceId(unsigned char address) {
