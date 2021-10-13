@@ -36,9 +36,10 @@ STATIC=libwiringPiMCP23x17rpi.a
 DYNAMIC=libwiringPiMCP23x17rpi.so.$(VERSION)
 
 # Use this line for debugging:
-# DEBUG	= -g -O0 -rdynamic
+ #DEBUG	= -g -O0 -rdynamic
 # Production
 DEBUG	= -O2
+
 CC	= gcc
 INCLUDE	= -I.
 CFLAGS	= $(DEBUG) -Wformat=2 -Wall $(INCLUDE) -Winline -pipe -fPIC

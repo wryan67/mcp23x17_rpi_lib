@@ -121,7 +121,10 @@ void* mcp23x17_pin_execute(void* args) {
     }
 
     MCP23x17_GPIO pin = mcp23x17_getGPIO(eventData->address, eventData->port, eventData->pin);
-    isrFunctions[eventData->address][eventData->port][eventData->pin](pin, eventData->value);
+
+    if (isrFunctions[eventData->address][eventData->port][eventData->pin]!=NULL) {
+        isrFunctions[eventData->address][eventData->port][eventData->pin](pin, eventData->value);
+    }
 
     if (debug) {
         fprintf(stderr, "<<mcp23x17_pin_execute::free--args %p\n", args); fflush(stderr);
@@ -264,6 +267,15 @@ void mcp23x17_updateRegister(int registerAddress, MCP23x17_GPIO gpio, int value)
 int mcp23x17_setup(int spi, MCP23x17_ADDRESS mcp23x17_address, int mcp23x17_inta_pin, int mcp23x17_intb_pin) {
     unsigned char c;
     int mcp23x17_handle;
+
+    for (int address=0;address<255;++address) {
+        for (int port=0;port<2;++port) {
+            for (int pin=0;pin<8;++pin) {
+                isrFunctions[address][port][pin] = NULL;
+            }
+        }
+    }
+
 
     for (int i = 0; i < 2; ++i) {
         if (pthread_mutex_init(&intxLock[i], NULL) != 0) {
