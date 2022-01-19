@@ -38,7 +38,7 @@ and install the library.
 Complie your applications using these command line arguments: -lwiringPi -lwiringPiMCP23x17
 
 
-## Usage
+## <a name="usage"></a>Usage
 
 There is an accopmaning command line utility, which will allow you to view 
 the status of the mcp23017 chip.  Before the Utility can be used, the chip must 
