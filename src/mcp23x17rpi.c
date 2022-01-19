@@ -408,13 +408,13 @@ int mcp23x17_setup(int spi, MCP23x17_ADDRESS mcp23x17_address, int mcp23x17_inta
     portPinValues[mcp23x17_address][1] = wiringPiI2CReadReg8(mcp23x17_handle, MCP23x17_GPIO(MCP23x17_PORTB));
 
     // setup interrupt pin event triggers
-    if (mcp23x17_inta_pin > 0 && mcp23x17_wiringPiISRWithPin(mcp23x17_inta_pin, INT_EDGE_FALLING, &mcp23x17_inta_activated) < 0)
+    if (mcp23x17_inta_pin >= 0 && mcp23x17_wiringPiISRWithPin(mcp23x17_inta_pin, INT_EDGE_FALLING, &mcp23x17_inta_activated) < 0)
     {
         fprintf(stderr, "Unable to setup ISR on pin %d: %s\n", mcp23x17_inta_pin, strerror(errno)); fflush(stderr);
         return -1;
     }
 
-    if (mcp23x17_inta_pin > 0 && mcp23x17_wiringPiISRWithPin(mcp23x17_intb_pin, INT_EDGE_FALLING, &mcp23x17_intb_activated) < 0)
+    if (mcp23x17_intb_pin >= 0 && mcp23x17_wiringPiISRWithPin(mcp23x17_intb_pin, INT_EDGE_FALLING, &mcp23x17_intb_activated) < 0)
     {
         fprintf(stderr, "Unable to setup ISR on pin %d: %s\n", mcp23x17_intb_pin, strerror(errno)); fflush(stderr);
         return -1;

@@ -53,7 +53,7 @@ extern "C"
     int  mcp23x17_getHandle(unsigned char mcp23x17_address);
     void mcp23x17_setHandle(unsigned char mcp23x17_address, int handle);
 
-    int mcp23x17_setup(int spi, MCP23x17_ADDRESS mcp23x17_address, int mcp23x17_inta_pin, int mcp23x17_intb_pin);
+    int mcp23x17_setup(int spi, MCP23x17_ADDRESS mcp23x17_address, int mcp23x17_inta_pin, int mcp23x17_intb_pin); // pass -1 if inta/intb are not used
 
     MCP23x17_GPIO    mcp23x17_getGPIO(MCP23x17_ADDRESS address, MCP23x17_PORT port, MCP23x17_PIN pin);
     MCP23x17_PIN     mcp23x17_getPin(MCP23x17_GPIO gpio);
