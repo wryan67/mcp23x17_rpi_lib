@@ -37,13 +37,6 @@ and install the library.
 ## Compiling
 Complie your applications using these command line arguments: -lwiringPi -lwiringPiMCP23x17
 
-## Examples
-In the readme folder, there is a suggested wiring diagram based on standard 
-CAT5 cabeling.  The normal I2C distance requirements apply, so be sure to 
-keep your cable short.
-
-In the example folder, there is a sample C++ program with some additional 
-instructions in the heading commments.  
 
 ## Usage
 
@@ -99,3 +92,28 @@ which may change the settings required for this utility to work.
 ## Datasheet
 
 [MCP23017/MCP23S17 Datasheet](http://ww1.microchip.com/downloads/en/devicedoc/20001952c.pdf)
+
+
+## <a name="example"></a>Example
+
+The example program "main.cpp" shows how to use the library to both detect events on input pins as well as modify the output on other pins.  belown is a sample of the program running while the switches are being tripped on/off.
+
+    $ ./example 
+    enable txs0108
+    initialization complete
+    init input pins
+    init led to match switch, value = 0
+    event pin<a0> value=1
+    event pin<a0> value=0
+    event pin<a0> value=1
+    event pin<a0> value=0
+
+
+![example1](https://raw.githubusercontent.com/wryan67/mcp23x17_rpi_lib/master/readme/0147360e29a8bb1fad6939c6808a00bebf11492ea2.jpg)
+![example2](https://raw.githubusercontent.com/wryan67/mcp23x17_rpi_lib/master/readme/01b87857856baf57ba885609b2ff861285b8ca0b5b.jpg)
+
+![example circuit](https://raw.githubusercontent.com/wryan67/mcp23x17_rpi_lib/master/readme/mcp23017_example.png)
+
+## video example
+
+https://youtu.be/Dp4egt5o8NM
