@@ -19,7 +19,7 @@ for an MCP23017 chip is 0x20.
 
 ## Prerequisites
 
-This Library is based on [WiringPi](http://wiringpi.com/), so, you'll need make sure you 
+This Library is based on [WiringPi](https://github.com/WiringPi), so, you'll need make sure you 
 have WiringPi installed before you can succesfully compile this library.  
 
 
