@@ -32,8 +32,8 @@ TARGET=mcp23x17
 # Use this line for debugging:
 # DEBUG	= -g -O0 -rdynamic
 # Production
-DEBUG	  = -O2
-CC	    = gcc
+DEBUG	= -O2
+CC	= gcc
 INCLUDE	= -I.
 CFLAGS	= $(DEBUG) -Wall $(INCLUDE) 
 
