@@ -133,31 +133,9 @@ void readAll() {
         }
     }
 
-    lcdPosition(lcdHandle,0,0);
-    lcdPrintf(lcdHandle,"A: %d%d %d%d  %d%d %d%d",
-            values[MCP23x17_PORTA][0],
-            values[MCP23x17_PORTA][1],
-            values[MCP23x17_PORTA][2],
-            values[MCP23x17_PORTA][3],
 
-            values[MCP23x17_PORTA][4],
-            values[MCP23x17_PORTA][5],
-            values[MCP23x17_PORTA][6],
-            values[MCP23x17_PORTA][7]
-        );
 
-    lcdPosition(lcdHandle,0,1);
-    lcdPrintf(lcdHandle,"B: %d%d %d%d  %d%d %d%d",
-            values[MCP23x17_PORTB][0],
-            values[MCP23x17_PORTB][1],
-            values[MCP23x17_PORTB][2],
-            values[MCP23x17_PORTB][3],
 
-            values[MCP23x17_PORTB][4],
-            values[MCP23x17_PORTB][5],
-            values[MCP23x17_PORTB][6],
-            values[MCP23x17_PORTB][7]
-        );
 
     
     //       1234567                1234567
@@ -181,22 +159,32 @@ void readAll() {
     printf("+---+------+---++---+------+---+\n");
 
     if (options.verbose) {
-
-//  printf("+---+------+---++---+------+---+\n");
-    printf("|  spi/i2c |Phy||Phy| Label    |\n");
-    printf("+----------+---++---+----------+\n");
-    printf("|     Vdd  | 9 || 20| Int-A    |\n");
-    printf("|     Vss  |10 || 19| Int-B    |\n");
-    printf("|   CS/NC  |11 || 18| Reset    |\n");
-    printf("| SCK/SCL  |12 || 17| A2       |\n");
-    printf("|  SI/SDA  |13 || 16| A1       |\n");
-    printf("|   SO/NC  |14 || 15| A0       |\n");
-    printf("+----------+---++---+----------+\n");
-
-
+        printf("|  spi/i2c |Phy||Phy| Label    |\n");
+        printf("+----------+---++---+----------+\n");
+        printf("|     Vdd  | 9 || 20| Int-A    |\n");
+        printf("|     Vss  |10 || 19| Int-B    |\n");
+        printf("|   CS/NC  |11 || 18| Reset    |\n");
+        printf("| SCK/SCL  |12 || 17| A2       |\n");
+        printf("|  SI/SDA  |13 || 16| A1       |\n");
+        printf("|   SO/NC  |14 || 15| A0       |\n");
+        printf("+----------+---++---+----------+\n");
     }
-
     fflush(stdout);
+
+    for (int p=0;p<2;++p) {
+        lcdPosition(lcdHandle,0,p);
+        lcdPrintf(lcdHandle,"A:  %d%d%d%d  %d%d%d%d",
+            values[MCP23x17_PORTA+p][0],
+            values[MCP23x17_PORTA+p][1],
+            values[MCP23x17_PORTA+p][2],
+            values[MCP23x17_PORTA+p][3],
+
+            values[MCP23x17_PORTA+p][4],
+            values[MCP23x17_PORTA+p][5],
+            values[MCP23x17_PORTA+p][6],
+            values[MCP23x17_PORTA+p][7]
+        );
+    }
 }
 
 void doNothing(MCP23x17_GPIO gpio, int value) {
