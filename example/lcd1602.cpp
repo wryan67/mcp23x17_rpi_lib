@@ -173,7 +173,8 @@ void readAll() {
 
     for (int p=0;p<2;++p) {
         lcdPosition(lcdHandle,0,p);
-        lcdPrintf(lcdHandle,"A:  %d%d%d%d  %d%d%d%d",
+        lcdPrintf(lcdHandle,"%c:  %d%d%d%d  %d%d%d%d",
+            'A'+p,
             values[MCP23x17_PORTA+p][0],
             values[MCP23x17_PORTA+p][1],
             values[MCP23x17_PORTA+p][2],
