@@ -1,4 +1,5 @@
 example
 knobtest
 lcd1602
+latch
 *.o
