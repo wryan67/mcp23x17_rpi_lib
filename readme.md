@@ -1,3 +1,7 @@
+# Branch Pi4
+
+This is a special branch to enhance performance of isr actions on RPi 3b & 4.  (isr=interrupt service routine)
+
 # Event Driven MCP23017
 
 This softtware library is designed to interface with the MCP2307 and MCP23S17 chips 
