@@ -148,10 +148,14 @@ int mcp23x17_wiringPiISRWithPin(int pin, int mode, void (*function)(int pin)) {
     // Now pre-open the /sys/class node - but it may already be open if
     //  we are in Sys mode...
 
+    if (mcp23x17_getDebug()) {
+        fprintf(stderr,"trying to open /sys/class node for interrupts\n");
+    }
+
     if (mcp23x17_sysFds[bcmGpioPin] == -1) {
         sprintf(fName, "/sys/class/gpio/gpio%d/value", bcmGpioPin);
         if ((mcp23x17_sysFds[bcmGpioPin] = open(fName, O_RDWR)) < 0) {
-            fprintf(stderr, "failed to open %s\n", fName); fflush(stderr);
+            fprintf(stderr, "mcp23x17::failed to open %s\n", fName); fflush(stderr);
             exit(9);
 //            return wiringPiFailure(WPI_FATAL, "wiringPiISR: unable to open %s: %s\n", fName, strerror(errno));
         }

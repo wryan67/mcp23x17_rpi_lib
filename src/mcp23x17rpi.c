@@ -310,8 +310,8 @@ int mcp23x17_setup(int spi, MCP23x17_ADDRESS mcp23x17_address, int mcp23x17_inta
         return -2;
     }
 
-
     if (mcp23x17_inta_pin >= 0) {
+        if (debug) fprintf(stderr,"mcp23x17 setup inta...\n");
         pinMode(mcp23x17_inta_pin, INPUT);
         pullUpDnControl(mcp23x17_inta_pin, PUD_UP);
 
@@ -324,6 +324,7 @@ int mcp23x17_setup(int spi, MCP23x17_ADDRESS mcp23x17_address, int mcp23x17_inta
     }
 
     if (mcp23x17_intb_pin >= 0 && mcp23x17_inta_pin != mcp23x17_intb_pin) {
+        if (debug) fprintf(stderr,"mcp23x17 setup intb...\n");
         if (rpiPin2address[mcp23x17_intb_pin] != 0xFFu) {
             fprintf(stderr, "gpio pin %d (intb) is already associated with a different address, namely %02x\n",
                 mcp23x17_intb_pin, rpiPin2address[mcp23x17_intb_pin]); fflush(stderr);
