@@ -1,6 +1,7 @@
 #include <wiringPi.h>
 #include <mcp23x17rpi.h>
 #include <lcd101rpi.h>
+#include "Options.h"
 #include "LatchOptions.h"
 
 // LED Pin - wiringPi pin 0 is BCM_GPIO 17.
@@ -12,6 +13,8 @@
 
 int lcdHandle;
 int lcdAddress = 0x27;
+
+
 
 LatchOptions options = LatchOptions();
 
@@ -40,7 +43,9 @@ bool setup() {
         exit(EXIT_FAILURE);
     }
 
-    mcp23x17_handle = mcp23x17_setup(false, options.i2cAddress, -1, -1);
+
+
+    mcp23x17_handle = mcp23x17_setup(false, options.i2cAddress, options.inta, options.intb);
 
     if (mcp23x17_handle < 0) {
         fprintf(stderr, "mcp23017 could not be initialized\n");
@@ -52,7 +57,6 @@ bool setup() {
         fprintf(stderr, "lcdInit failed\n");  
         return 2; 
     }
-     
 
     return true;
 } 
@@ -61,62 +65,6 @@ bool setup() {
 int values[MCP23x17_PORTS][8];
 
 void readAll() {
-    unsigned char iodirValues[MCP23x17_PORTS];
-    unsigned char olatValues[MCP23x17_PORTS];
-    unsigned char gpioValues[MCP23x17_PORTS];
-
-
-    int modes[MCP23x17_PORTS][8];
-
-    for (int port = 0; port < MCP23x17_PORTS; ++port) {
-        int regIODIR = iodirValues[port]= wiringPiI2CReadReg8(mcp23x17_handle, MCP23x17_IODIR(port));
-        int regOLAT  = olatValues[port] = wiringPiI2CReadReg8(mcp23x17_handle, MCP23x17_OLAT(port));
-        int regGPIO  = gpioValues[port] = wiringPiI2CReadReg8(mcp23x17_handle, MCP23x17_GPIO(port));
-
-        iodirValues[port]= regIODIR;
-        olatValues[port] = regOLAT; 
-        gpioValues[port] = regGPIO;
-
-        char binIODIR[10];
-        char binOLAT[10];
-        char binGPIO[10];
-  
-        memset(binIODIR,   0, 10);
-        memset(binOLAT,    0, 10);
-        memset(binGPIO,    0, 10);
-        memset(binIODIR, ' ',  9);
-        memset(binOLAT,  ' ',  9);
-        memset(binGPIO,  ' ',  9);
-    }
-
-    for (int port = 0; port < MCP23x17_PORTS; ++port) {
-        for (int pin = 0; pin < 8; ++pin) {
-            int iodir = iodirValues[port] & 0x01;
-            int olat = olatValues[port] & 0x01;
-            int gpio = gpioValues[port] & 0x01;
-
-            modes[port][pin] = iodir;
-
-            if (iodir==1) {
-                // 1==input;  0=output
-                if (values[port][pin]) {
-                    values[port][pin] = gpio;
-                }
-            } else {
-                values[port][pin] = olat;
-            }
-            
-            iodirValues[port] = iodirValues[port] >> 1;
-            olatValues[port]  = olatValues[port]  >> 1;
-            gpioValues[port]  = gpioValues[port]  >> 1;
-        }
-    }
-
-
-
-
-
-    
     //       1234567                1234567
     printf("+--------------++--------------+\n");
     printf("|       IIC Address 0x%02x       |\n",options.i2cAddress);
@@ -127,13 +75,12 @@ void readAll() {
     printf("+---+------+---++---+------+---+\n");
 
     for (int pin = 0; pin < 8; ++pin) {
-        char* mode_a = (char*)((modes[MCP23x17_PORTA][7-pin] == 0) ? " OUT" : " IN ");
-        char* mode_b = (char*)((modes[MCP23x17_PORTB][  pin] == 0) ? " OUT" : " IN ");
-        
+        char *mode=" IN ";
+
         printf("| %d | %4.4s | %d || %d | %4.4s | %d |\n", 
-            pin, mode_b, values[MCP23x17_PORTB][pin],
+            pin, mode, values[MCP23x17_PORTB][pin],
             
-            values[MCP23x17_PORTA][7-pin] , mode_a, 7-pin);
+            values[MCP23x17_PORTA][7-pin] , mode, 7-pin);
     }
     printf("+---+------+---++---+------+---+\n");
 
@@ -168,17 +115,25 @@ void readAll() {
 }
 
 void doNothing(MCP23x17_GPIO gpio, int value) {
-  return;
+    int port = mcp23x17_getPort(gpio);
+    int pin  = mcp23x17_getPin(gpio);
+    fprintf(stderr,"port %c pin=%d value=%d\n",'A'+port,pin,value);
 }
 
-void setMode(int port, int pin) {
-   mcp23x17_setPinInputMode(mcp23x17_getGPIO(options.i2cAddress, port, pin), 1, doNothing);
-}
+
+
 
 int main(int argc, char **argv)
 {
     if (!options.commandLineOptions(argc, argv)) {
         exit(EXIT_FAILURE);
+    }
+    if (mcp23x17_getDebug()) {
+        fprintf(stderr, "inta=%d intb=%d\n", options.inta, options.intb);
+    }
+    if (options.inta<0  || options.intb<0) {
+        fprintf(stderr, "Both interrupt pins must be supplied\n");
+        return 2;
     }
 
     if (!setup()) {
@@ -188,7 +143,7 @@ int main(int argc, char **argv)
 
     for (int port=0 ; port < MCP23x17_PORTS; ++port) {
       for (int pin = 0; pin < 8; ++pin) {
-        setMode(port,pin);
+          mcp23x17_setPinInputMode(mcp23x17_getGPIO(options.i2cAddress, port, pin), 1, doNothing);
       }
     }
 

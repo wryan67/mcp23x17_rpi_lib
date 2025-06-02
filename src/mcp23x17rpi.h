@@ -42,7 +42,10 @@
 extern "C"
 {
 #endif  
-    typedef unsigned char MCP23x17_ADDRESS;  // 0x00 - 0xFF 
+    extern int mcp23x17_inta_pin;
+    extern int mcp23x17_intb_pin;
+
+    typedef unsigned char MCP23x17_ADDRESS;  // 0x00 - 0xFF
     typedef unsigned char MCP23x17_PORT;     // 0 or 1
     typedef unsigned char MCP23x17_PIN;      // 0-7
     typedef unsigned int  MCP23x17_GPIO;     // (ADDRESS << 8) | ( (0x01 & PORT) << 4 ) | (0x0F & PIN)

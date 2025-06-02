@@ -22,13 +22,10 @@
 
 
 
-extern volatile int mcp23x17_sysFds[64];
 
 // methods
 int piBoardRev(void);      // wiringPi
 
 int mcp23x17_getDebug();   
-
-pthread_t mcp23x17_threadCreate(void* (*method)(void*), char* description, void* arg);
 
 int mcp23x17_wiringPiISRWithPin(int pin, int mode, void (*function)(int pin));

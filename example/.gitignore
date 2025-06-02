@@ -2,4 +2,6 @@ example
 knobtest
 lcd1602
 latch
+isrlatch
 *.o
+*.log

@@ -12,6 +12,8 @@
 #include "mcp23x17_threads.h"
 
 // static int mcp23x17_handle;
+int mcp23x17_inta_pin;
+int mcp23x17_intb_pin;
 
 static volatile unsigned char portPinValues[MCP23x17_MAX_ADDRESS][MCP23x17_PORTS];
 
@@ -156,16 +158,16 @@ void* mcp23x17_intx_execute(void* args) {
 
     if (debug) {
         fprintf(stderr, "mcp23x17_intx_execute(%02x): port=%c register=%02x\n", mcp23x17_address, 65+eventData->port, registerAddress); fflush(stderr);
-        fprintf(stderr, "mcp23x17_intx_execute(%02x): before pinValuesPort[0]=%02x\n", mcp23x17_address, portPinValues[mcp23x17_address][0]);
-        fprintf(stderr, "mcp23x17_intx_execute(%02x): before pinValuesPort[1]=%02x\n", mcp23x17_address, portPinValues[mcp23x17_address][1]); fflush(stderr);
+        fprintf(stderr, "mcp23x17_intx_execute(%02x): before pinValuesPort[A]=%02x\n", mcp23x17_address, portPinValues[mcp23x17_address][0]);
+        fprintf(stderr, "mcp23x17_intx_execute(%02x): before pinValuesPort[B]=%02x\n", mcp23x17_address, portPinValues[mcp23x17_address][1]); fflush(stderr);
     }
 
     _newValues = wiringPiI2CReadReg8(mcp23x17_handle, registerAddress);
     portPinValues[mcp23x17_address][eventData->port] = _newValues;
 
     if (debug) {
-        fprintf(stderr, "mcp23x17_intx_execute(%02x): after  pinValuesPort[0]=%02x\n", mcp23x17_address, portPinValues[mcp23x17_address][0]);
-        fprintf(stderr, "mcp23x17_intx_execute(%02x): after  pinValuesPort[1]=%02x\n", mcp23x17_address, portPinValues[mcp23x17_address][1]); fflush(stderr);
+        fprintf(stderr, "mcp23x17_intx_execute(%02x): after  pinValuesPort[A]=%02x\n", mcp23x17_address, portPinValues[mcp23x17_address][0]);
+        fprintf(stderr, "mcp23x17_intx_execute(%02x): after  pinValuesPort[B]=%02x\n", mcp23x17_address, portPinValues[mcp23x17_address][1]); fflush(stderr);
     }
 
     pthread_mutex_unlock(&intxLock[eventData->port]);
@@ -202,24 +204,26 @@ void* mcp23x17_intx_execute(void* args) {
 
 void mcp23x17_intx_activated(int rpiPin, MCP23x17_PORT port) {
     char description[64];
-    sprintf(description, "mcp23x17_int%c_activated rpiPin=%d", 97+port, rpiPin);
+    sprintf(description, "mcp23x17_int%c_activated rpiPin=%d", 'a'+port, rpiPin);
 
     mcp23x17_eventData eventData;
     eventData.rpiPin = rpiPin;
     eventData.port   = port;
 
     if (debug) {
-        fprintf(stderr, "%s; port-%c\n", description, eventData.port); fflush(stderr);
+        fprintf(stderr, "%s; port-%c\n", description, 'A'+eventData.port); fflush(stderr);
     }
     mcp23x17_createThread(mcp23x17_intx_execute, description, eventData);
 }
 
 
-void mcp23x17_inta_activated(int pin) {
+void mcp23x17_inta_activated() {
+    int pin = mcp23x17_inta_pin;
     mcp23x17_intx_activated(pin, MCP23x17_PORTA);
 }
 
-void mcp23x17_intb_activated(int pin) {
+void mcp23x17_intb_activated() {
+    int pin = mcp23x17_intb_pin;
     mcp23x17_intx_activated(pin, MCP23x17_PORTB);
 }
 
@@ -264,9 +268,12 @@ void mcp23x17_updateRegister(int registerAddress, MCP23x17_GPIO gpio, int value)
 }
 
 
-int mcp23x17_setup(int spi, MCP23x17_ADDRESS mcp23x17_address, int mcp23x17_inta_pin, int mcp23x17_intb_pin) {
+int mcp23x17_setup(int spi, MCP23x17_ADDRESS mcp23x17_address, int mcp23x17_inta_setup_pin, int mcp23x17_intb_setup_pin) {
     unsigned char c;
     int mcp23x17_handle;
+    mcp23x17_inta_pin = mcp23x17_inta_setup_pin;
+    mcp23x17_intb_pin = mcp23x17_intb_setup_pin;
+
 
     for (int address=0;address<255;++address) {
         for (int port=0;port<2;++port) {
@@ -387,8 +394,8 @@ int mcp23x17_setup(int spi, MCP23x17_ADDRESS mcp23x17_address, int mcp23x17_inta
     for (int port = 0; port < MCP23x17_PORTS; ++port) {
         wiringPiI2CWriteReg8(mcp23x17_handle, MCP23x17_OLAT(port),    0x00);
         wiringPiI2CWriteReg8(mcp23x17_handle, MCP23x17_IODIR(port),   0x00);
-        wiringPiI2CWriteReg8(mcp23x17_handle, MCP23x17_IPOL(port),    0x00);
-        wiringPiI2CWriteReg8(mcp23x17_handle, MCP23x17_GPINTEN(port), 0x00);
+        wiringPiI2CWriteReg8(mcp23x17_handle, MCP23x17_IPOL(port),    0x00);  // Active-Low
+        wiringPiI2CWriteReg8(mcp23x17_handle, MCP23x17_GPINTEN(port), 0x00);  // Active driver
         wiringPiI2CWriteReg8(mcp23x17_handle, MCP23x17_DEFVAL(port),  0x00);
         wiringPiI2CWriteReg8(mcp23x17_handle, MCP23x17_INTCON(port),  0x00);
         wiringPiI2CWriteReg8(mcp23x17_handle, MCP23x17_GPPU(port),    0x00);
