@@ -16,6 +16,7 @@ public:
   int   i2cAddress = 0x20;
   int   inta=-1;
   int   intb=-1;
+  bool  latch=true;
 
 // methods
   void usage();

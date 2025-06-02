@@ -118,7 +118,7 @@ void updateValues(MCP23x17_GPIO gpio, int value) {
     int port = mcp23x17_getPort(gpio);
     int pin  = mcp23x17_getPin(gpio);
     fprintf(stderr,"port %c pin=%d value=%d\n",'A'+port,pin,value);
-    if (value==0) {
+    if (value==0 || !options.latch) {
         values[port][pin] = value;
     }
 }

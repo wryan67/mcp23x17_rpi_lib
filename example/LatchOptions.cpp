@@ -3,21 +3,12 @@
 void LatchOptions::usage() {
     fprintf(stderr, "usage: mcp23017 -i i2c_address\n");
     fprintf(stderr, "  Options:\n");
-    fprintf(stderr, "  -a = int-a [pin]\n");
-    fprintf(stderr, "  -b = int-b [pin]\n");
-    fprintf(stderr, "  -c = configuration\n");
+    fprintf(stderr, "  -a = int-a gpio\n");
+    fprintf(stderr, "  -b = int-b gpio\n");
     fprintf(stderr, "  -d = debug\n");
     fprintf(stderr, "  -i = i2c address; default=0x20\n");
-    fprintf(stderr, "  -m = mode input/output\n");
-    fprintf(stderr, "  -o = read olat\n");
-    fprintf(stderr, "  -r = read pin values\n");
+    fprintf(stderr, "  -l = don't latch\n");
     fprintf(stderr, "  -v = verbose\n");
-    fprintf(stderr, "  -w = write 0/1\n");
-    fprintf(stderr, "  -x = reset device\n");
-    fprintf(stderr, "Note:  Using write automatically forces\n");
-    fprintf(stderr, "       output mode on the specified pin\n");
-    fprintf(stderr, "Caution:  Reading the GPIO pins will\n");
-    fprintf(stderr, "          clear the interrupts\n");
     fflush(stderr);
     exit(1);
 }
@@ -25,21 +16,13 @@ void LatchOptions::usage() {
 bool LatchOptions::commandLineOptions(int argc, char** argv) {
     int c, index;
 
-
-
-    const char* shortOptions = "a:b:Lcdi:m:op:rvw:x";
+    const char* shortOptions = "a:b:di:lv";
 
     static struct option longOptions[] = {
       {"porta",          optional_argument, NULL, 'a'},
       {"portb",          optional_argument, NULL, 'b'},
-      {"configuration",  optional_argument, NULL, 'c'},
       {"i2c",            optional_argument, NULL, 'i'},
-      {"mode",           optional_argument, NULL, 'm'},
-      {"olat",           optional_argument, NULL, 'o'},
-      {"read",           optional_argument, NULL, 'r'},
       {"verbose",        optional_argument, NULL, 'v'},
-      {"write",          optional_argument, NULL, 'w'},
-      {"reset",          optional_argument, NULL, 'x'},
 
       {0, 0, 0, 0}
     };
@@ -57,10 +40,6 @@ bool LatchOptions::commandLineOptions(int argc, char** argv) {
             }
 
 
-            case 'c': {
-                action = 'c';
-                break;
-            }
 
             case 'd': {
                 printf("debugging mode enabled\n");
@@ -75,14 +54,13 @@ bool LatchOptions::commandLineOptions(int argc, char** argv) {
                 break;
             }
 
-            case 'o':
-                action = 'o';
+            case 'l': { // dont latch
+                latch=false;
                 break;
+            }
 
 
-            case 'r':
-                action = 'r';
-                break;
+
 
             case 'v':
                 verbose = true;
