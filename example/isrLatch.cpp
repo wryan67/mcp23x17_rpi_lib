@@ -64,7 +64,7 @@ bool setup() {
 
 int values[MCP23x17_PORTS][8];
 
-void readAll() {
+void screenUpdate() {
     //       1234567                1234567
     printf("+--------------++--------------+\n");
     printf("|       IIC Address 0x%02x       |\n",options.i2cAddress);
@@ -157,7 +157,7 @@ int main(int argc, char **argv)
 
     while ( true ) {
       system("clear");
-      readAll();
+      screenUpdate();
       delay(100);
     }
 		    

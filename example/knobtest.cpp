@@ -72,7 +72,7 @@ void write2pin() {
     mcp23x17_setPinOutputMode(mcp23x17_getGPIO(options.i2cAddress, options.port, options.pin), options.value);
 }
 
-void readAll() {
+void screenUpdate() {
     unsigned char iodirValues[MCP23x17_PORTS];
     unsigned char olatValues[MCP23x17_PORTS];
     unsigned char gpioValues[MCP23x17_PORTS];
@@ -205,7 +205,7 @@ int main(int argc, char **argv)
 
     while ( true ) {
       system("clear");
-      readAll();
+        screenUpdate();
       delay(100);
     }
 		    

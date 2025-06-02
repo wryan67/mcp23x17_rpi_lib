@@ -60,7 +60,7 @@ bool setup() {
 
 int values[MCP23x17_PORTS][8];
 
-void readAll() {
+void screenUpdate() {
     unsigned char iodirValues[MCP23x17_PORTS];
     unsigned char olatValues[MCP23x17_PORTS];
     unsigned char gpioValues[MCP23x17_PORTS];
@@ -199,7 +199,7 @@ int main(int argc, char **argv)
 
     while ( true ) {
       system("clear");
-      readAll();
+        screenUpdate();
       delay(100);
     }
 		    
