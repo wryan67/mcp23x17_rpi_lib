@@ -114,10 +114,11 @@ void readAll() {
     }
 }
 
-void doNothing(MCP23x17_GPIO gpio, int value) {
+void updateValues(MCP23x17_GPIO gpio, int value) {
     int port = mcp23x17_getPort(gpio);
     int pin  = mcp23x17_getPin(gpio);
     fprintf(stderr,"port %c pin=%d value=%d\n",'A'+port,pin,value);
+    values[port][pin]=value;
 }
 
 
@@ -143,7 +144,7 @@ int main(int argc, char **argv)
 
     for (int port=0 ; port < MCP23x17_PORTS; ++port) {
       for (int pin = 0; pin < 8; ++pin) {
-          mcp23x17_setPinInputMode(mcp23x17_getGPIO(options.i2cAddress, port, pin), 1, doNothing);
+          mcp23x17_setPinInputMode(mcp23x17_getGPIO(options.i2cAddress, port, pin), 1, updateValues);
       }
     }
 

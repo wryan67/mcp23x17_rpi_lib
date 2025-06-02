@@ -188,7 +188,7 @@ void readAll() {
     }
 }
 
-void doNothing(MCP23x17_GPIO gpio, int value) {
+void updateValues(MCP23x17_GPIO gpio, int value) {
   return;
 }
 
@@ -202,7 +202,8 @@ void setMode() {
        if (options.value < 0) {
            options.value = 1;
        }
-       mcp23x17_setPinInputMode(mcp23x17_getGPIO(options.i2cAddress, options.port, options.pin), options.value, doNothing);
+           mcp23x17_setPinInputMode(mcp23x17_getGPIO(options.i2cAddress, options.port, options.pin), options.value,
+                                    updateValues);
        break;
    }  
    return;
