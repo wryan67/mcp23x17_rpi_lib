@@ -75,7 +75,7 @@ void readAll() {
     printf("+---+------+---++---+------+---+\n");
 
     for (int pin = 0; pin < 8; ++pin) {
-        char *mode=" IN ";
+        const char *mode=" IN ";
 
         printf("| %d | %4.4s | %d || %d | %4.4s | %d |\n", 
             pin, mode, values[MCP23x17_PORTB][pin],
@@ -118,7 +118,9 @@ void updateValues(MCP23x17_GPIO gpio, int value) {
     int port = mcp23x17_getPort(gpio);
     int pin  = mcp23x17_getPin(gpio);
     fprintf(stderr,"port %c pin=%d value=%d\n",'A'+port,pin,value);
-    values[port][pin]=value;
+    if (value==0) {
+        values[port][pin] = value;
+    }
 }
 
 
